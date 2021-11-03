@@ -15,13 +15,27 @@ public class World {
     }
     public static void main(String[] args){
         System.out.println("system wystartorwał");
+
+        /*
         Direction[] tab =  {Direction.f, Direction.b, Direction.r, Direction.l};
         run(tab);
+
         Vector2d position1 = new Vector2d(1,2);
         System.out.println(position1);
         Vector2d position2 = new Vector2d(-2,1);
         System.out.println(position2);
         System.out.println(position1.add(position2));
+        */
+
+        Animal zwierz = new Animal();
+
+        String[] directions = {"cofee","r", "f", "f", "f"};
+        for (MoveDirection d : OptionParser.parse(directions)){
+            zwierz.move(d);
+        }
+
+        System.out.println(zwierz.toString());
+
         System.out.println("system zakończył działanie");
     }
 }

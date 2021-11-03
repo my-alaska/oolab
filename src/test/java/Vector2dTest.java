@@ -3,6 +3,7 @@ import agh.ics.oop.Vector2d;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class Vector2dTest {
     @Test
@@ -18,11 +19,17 @@ public class Vector2dTest {
     void precedesTest(){
         Vector2d testVector = new Vector2d(1,1);
         assertTrue( testVector.precedes(new Vector2d(2,2)));
+        assertFalse(testVector.precedes(new Vector2d(2,0)));
+        assertFalse(testVector.precedes(new Vector2d(0,2)));
+        assertFalse(testVector.precedes(new Vector2d(0,0)));
     }
     @Test
     void followsTest(){
-        Vector2d testVector = new Vector2d(2,2);
-        assertTrue( testVector.follows(new Vector2d(1,1)));
+        Vector2d testVector = new Vector2d(1,1);
+        assertTrue( testVector.follows(new Vector2d(0,0)));
+        assertFalse(testVector.follows(new Vector2d(2,0)));
+        assertFalse(testVector.follows(new Vector2d(0,2)));
+        assertFalse(testVector.follows(new Vector2d(2,2)));
     }
     @Test
     void upperRightTest(){

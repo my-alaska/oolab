@@ -15,7 +15,6 @@ public class MapDirectionTest {
         test = MapDirection.WEST;
         assertEquals(test.next(), MapDirection.NORTH);
     }
-
     @Test
     void prevTest(){
         MapDirection test = MapDirection.NORTH;
@@ -27,7 +26,4 @@ public class MapDirectionTest {
         test = MapDirection.EAST;
         assertEquals(test.previous(), MapDirection.NORTH);
     }
-
 }
-
-
