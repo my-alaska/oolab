@@ -1,7 +1,7 @@
 import agh.ics.oop.Animal;
 
 import agh.ics.oop.MoveDirection;
-import agh.ics.oop.OptionParser;
+import agh.ics.oop.OptionsParser;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -126,7 +126,7 @@ public class AnimalMoveTest {
         Animal zwierz = new Animal();
 
         String[] directions = {"cofee","r","Tea", "f", "f", "f", "right", "forward", "figgwasd", "l", "backward"};
-        for (MoveDirection d : OptionParser.parse(directions)){
+        for (MoveDirection d : OptionsParser.parse(directions)){
             zwierz.move(d);
         }
         assertEquals("(3,1) Wschód", zwierz.toString());

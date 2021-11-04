@@ -2,7 +2,7 @@ package agh.ics.oop;
 
 import java.util.*;
 
-public class OptionParser {
+public class OptionsParser {
     List<MoveDirection> directions = Collections.emptyList();
 
     public static MoveDirection[] parse(String[] arr) {

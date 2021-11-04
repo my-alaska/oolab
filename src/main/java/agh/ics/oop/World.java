@@ -27,6 +27,7 @@ public class World {
         System.out.println(position1.add(position2));
         */
 
+        /*
         Animal zwierz = new Animal();
 
         String[] directions = {"cofee","r", "f", "f", "f"};
@@ -35,6 +36,14 @@ public class World {
         }
 
         System.out.println(zwierz.toString());
+        */
+
+        String[] tab = {"f", "b", "r", "l", "f", "f", "r", "r", "f", "f", "f", "f", "f", "f", "f", "f"};
+        MoveDirection[] directions = new OptionsParser().parse( tab );
+        IWorldMap map = new RectangularMap(10, 5);
+        Vector2d[] positions = { new Vector2d(2,2), new Vector2d(3,4) };
+        IEngine engine = new SimulationEngine(directions, map, positions);
+        engine.run();
 
         System.out.println("system zakończył działanie");
     }
