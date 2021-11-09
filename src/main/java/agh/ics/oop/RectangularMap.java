@@ -5,25 +5,25 @@ import java.util.List;
 
 public class RectangularMap implements IWorldMap{
     private int width, height;
-    public List<Animal> animals;
+    private List<Animal> animals;
 
     public RectangularMap(int width, int height){
         this.animals = new ArrayList<>();
         if (width > 0){
-            this.width = width;
+            this.width = width-1;
         }else{
             this.width = 4;
         }
 
         if (height > 0){
-            this.height = height;
+            this.height = height-1;
         }else{
             this.height = 4;
         }
     }
 
     public boolean canMoveTo(Vector2d position){
-        return (!isOccupied(position) && (position.x >= 0 && position.x <= width && position.y >= 0 && position.y <= height));
+        return !isOccupied(position) && position.follows(new Vector2d(0,0)) && position.precedes(new Vector2d(width,height));
     }
 
     public boolean place(Animal animal){
@@ -38,12 +38,7 @@ public class RectangularMap implements IWorldMap{
     }
 
     public boolean isOccupied(Vector2d position){
-        for(Animal a : animals){
-            if (a.getPosition().equals(position)){
-                return true;
-            }
-        }
-        return false;
+        return objectAt(position) != null;
     }
 
     public Object objectAt(Vector2d position) {

@@ -1,34 +1,44 @@
 package agh.ics.oop;
 
-public class SimulationEngine implements IEngine{
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+public class SimulationEngine implements IEngine {
     private MoveDirection[] moves;
     private IWorldMap map;
-    private Vector2d[] positions;
+    private Vector2d[] positions; ///needed only for tests
+    private ArrayList<Animal> animals;
 
-    public SimulationEngine(MoveDirection[] moves, IWorldMap map, Vector2d[] positions){
+    public SimulationEngine(MoveDirection[] moves, IWorldMap map, Vector2d[] positions) {
         this.moves = moves;
         this.map = map;
-        this.positions = positions;
-        for( Vector2d p : this.positions){
-            new Animal(map, p);
+        this.positions = positions; ///needed only for tests
+        animals = new ArrayList<Animal>();
+
+        for (Vector2d p : positions) {
+            Animal a = new Animal(map, p);
+            animals.add(a);
         }
     }
 
-    @Override
-    public void run(){
+    public void run() {
         int numOfMoves = moves.length;
-        int numOfAnimals = positions.length;
-        System.out.println(map.toString());
-        for(int i = 0; i < numOfMoves; i++){
+        int numOfAnimals = animals.size();
 
-            Animal animal = (Animal) map.objectAt(positions[i%numOfAnimals]);
-            if(animal != null){
+        System.out.println(map.toString());
+
+        for (int i = 0; i < numOfMoves; i++) {
+
+            Animal animal = animals.get(i % numOfAnimals);
+            if (animal != null) {
                 animal.move(moves[i]);
-                positions[i%numOfAnimals] = animal.getPosition();
-                System.out.println(map.toString());
+                positions[i % numOfAnimals] = animal.getPosition(); ///needed only for tests
             }
+
+            System.out.println(map.toString());
         }
 
     }
-
 }

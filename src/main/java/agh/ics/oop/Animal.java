@@ -31,10 +31,10 @@ public class Animal {
 
     public String toString(){
         return switch (direction) {
-            case NORTH -> "N";
-            case EAST -> "E";
-            case SOUTH -> "S";
-            case WEST -> "W";
+            case NORTH -> "^";
+            case EAST -> ">";
+            case SOUTH -> "v";
+            case WEST -> "<";
         };
     }
 
@@ -59,44 +59,13 @@ public class Animal {
         direction = direction.previous();
     }
     private void moveForward(){
-
-        switch (direction){
-            case NORTH:
-                if(map.canMoveTo(new Vector2d(position.x,position.y+1))){
-                    position = position.add(new Vector2d(0,1));}
-                break;
-            case EAST:
-                if (map.canMoveTo(new Vector2d(position.x+1,position.y))){
-                    position = position.add(new Vector2d(1,0));}
-                break;
-            case SOUTH:
-                if (map.canMoveTo(new Vector2d(position.x,position.y-1))){
-                    position = position.add(new Vector2d(0,-1));}
-                break;
-            case WEST:
-                if (map.canMoveTo(new Vector2d(position.x-1,position.y))){
-                    position = position.add(new Vector2d(-1,0));}
-                break;
+        if(map.canMoveTo(position.add(direction.toUnitVector()))){
+            position = position.add(direction.toUnitVector());
         }
     }
     private void moveBackward(){
-        switch (direction){
-            case NORTH:
-                if(map.canMoveTo(new Vector2d(position.x,position.y-1))){
-                    position = position.subtract(new Vector2d(0,1));}
-                break;
-            case EAST:
-                if (map.canMoveTo(new Vector2d(position.x-1,position.y))){
-                    position = position.subtract(new Vector2d(1,0));}
-                break;
-            case SOUTH:
-                if (map.canMoveTo(new Vector2d(position.x,position.y+1))){
-                    position = position.subtract(new Vector2d(0,-1));}
-                break;
-            case WEST:
-                if (map.canMoveTo(new Vector2d(position.x+1,position.y))){
-                    position = position.subtract(new Vector2d(-1,0));}
-                break;
+        if(map.canMoveTo(position.subtract(direction.toUnitVector()))){
+            position = position.subtract(direction.toUnitVector());
         }
     }
 
