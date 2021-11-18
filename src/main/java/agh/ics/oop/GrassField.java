@@ -10,13 +10,15 @@ public class GrassField extends AbstractWorldMap{
     public GrassField(int numberGrass){
         this.numberGrass = numberGrass;
         this.grass = new ArrayList<>();
+
         for(int i = 0; i < numberGrass;){
             Vector2d position = new Vector2d((int) (Math.random() * Math.sqrt(numberGrass*10)) , (int) (Math.random() * Math.sqrt(numberGrass*10)));
             if(!isOccupied(position)){
-                grass.add(new Grass(position));
+                    grass.add(new Grass(position));
                 i++;
             }
         }
+
     }
 
     public boolean canMoveTo(Vector2d position){

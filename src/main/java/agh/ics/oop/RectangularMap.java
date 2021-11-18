@@ -6,8 +6,10 @@ import java.util.List;
 public class RectangularMap extends AbstractWorldMap{
     private int width, height;
     private Vector2d corner;
+    private Vector2d mapStart;
 
     public RectangularMap(int width, int height){
+        this.mapStart = new Vector2d(0,0);
         int a,b;
         if (width > 0){
             this.width = width-1;
@@ -28,10 +30,10 @@ public class RectangularMap extends AbstractWorldMap{
     }
 
     public boolean canMoveTo(Vector2d position){
-        return super.canMoveTo(position) && position.follows(new Vector2d(0,0)) && position.precedes(corner);
+        return super.canMoveTo(position) && position.follows(mapStart) && position.precedes(corner);
     }
 
-    public Vector2d lowleft(){return new Vector2d(0,0);}
+    public Vector2d lowleft(){return mapStart;}
     public Vector2d upright(){return corner;}
 
 }
