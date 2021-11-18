@@ -3,7 +3,42 @@ package agh.ics.oop;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RectangularMap implements IWorldMap{
+public class RectangularMap extends AbstractWorldMap{
+    private int width, height;
+    private Vector2d corner;
+
+    public RectangularMap(int width, int height){
+        int a,b;
+        if (width > 0){
+            this.width = width-1;
+            a = width-1;
+        }else{
+            this.width = 4;
+            a = 4;
+        }
+
+        if (height > 0){
+            this.height = height-1;
+            b = height-1;
+        }else{
+            this.height = 4;
+            b = 4;
+        }
+        corner = new Vector2d(a,b);
+    }
+
+    public boolean canMoveTo(Vector2d position){
+        return super.canMoveTo(position) && position.follows(new Vector2d(0,0)) && position.precedes(corner);
+    }
+
+    public Vector2d lowleft(){return new Vector2d(0,0);}
+    public Vector2d upright(){return corner;}
+
+}
+
+
+
+/*public class RectangularMap implements IWorldMap{
     private int width, height;
     private List<Animal> animals;
 
@@ -27,6 +62,14 @@ public class RectangularMap implements IWorldMap{
     }
 
     public boolean place(Animal animal){
+        if(canMoveTo(animal.getPosition())){
+            this.animals.add(animal);
+            return true;
+        }else{
+            return false;
+        }
+
+        this shit:::: is gonneeee comented out
         if (this.animals.contains(animal)){
             return false;
         }else if(isOccupied(animal.getPosition())){
@@ -55,3 +98,4 @@ public class RectangularMap implements IWorldMap{
     }
 
 }
+*/
