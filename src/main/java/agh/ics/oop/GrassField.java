@@ -9,9 +9,10 @@ public class GrassField extends AbstractWorldMap{
     private MapBoundary boundaries;
 
     public GrassField(int numberGrass){
-        this.boundaries = new MapBoundary();
+        this.boundaries = new MapBoundary(this);
         this.numberGrass = numberGrass;
         this.grassMap = new LinkedHashMap<>();
+
 
         for(int i = 0; i < numberGrass;){
             Vector2d position = new Vector2d((int) (Math.random() * Math.sqrt(numberGrass*10)) , (int) (Math.random() * Math.sqrt(numberGrass*10)));
