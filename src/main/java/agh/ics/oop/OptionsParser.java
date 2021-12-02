@@ -7,7 +7,7 @@ public class OptionsParser {
     private static Set<String> legalMoves;
 
     public OptionsParser(){
-        legalMoves =  new HashSet<>();
+        this.legalMoves =  new HashSet<>();
         legalMoves.add("f");
         legalMoves.add("forward");
         legalMoves.add("b");
