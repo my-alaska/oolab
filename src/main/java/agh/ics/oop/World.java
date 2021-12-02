@@ -2,7 +2,7 @@ package agh.ics.oop;
 
 public class World {
 
-    static void run(Direction[] arr){
+    /*static void run(Direction[] arr){
         System.out.println("moves forward");
         for(int i = 0; i < arr.length; i++){
             switch (arr[i]) {
@@ -12,9 +12,10 @@ public class World {
                 case r -> System.out.println("Zwierzak skręca w prawo");
             }
         }
-    }
+    }*/
     public static void main(String[] args){
-        System.out.println("system wystartorwał");
+        try {
+            System.out.println("system wystartorwał");
 
         /*
         Direction[] tab =  {Direction.f, Direction.b, Direction.r, Direction.l};
@@ -38,15 +39,19 @@ public class World {
         System.out.println(zwierz.toString());
         */
 
-        String[] tab = {"f", "b", "r", "l", "f", "f", "r", "r", "f", "f", "f", "f", "f", "f", "f", "f"};
-        MoveDirection[] directions = new OptionsParser().parse( tab );
-        IWorldMap map = new RectangularMap(10, 10);
-        ///IWorldMap map = new GrassField(10);
-        Vector2d[] positions = { new Vector2d(2,2), new Vector2d(3,4) };
-        IEngine engine = new SimulationEngine(directions, map, positions);
-        engine.run();
-        System.out.println(map.toString());
+            String[] tab = {"f", "b", "r", "l", "f", "f", "r", "r", "f", "f", "f", "f", "f", "f", "f", "f"};
+            MoveDirection[] directions = new OptionsParser().parse( tab );
+            //IWorldMap map = new RectangularMap(11, 11);
+            IWorldMap map = new GrassField(10);
+            Vector2d[] positions = { new Vector2d(2,2), new Vector2d(3,4)};
+            IEngine engine = new SimulationEngine(directions, map, positions);
+            engine.run();
+            System.out.println(map.toString());
 
-        System.out.println("system zakończył działanie");
+            System.out.println("system zakończył działanie");
+        }catch(IllegalArgumentException ex){
+            System.out.println(ex);
+        }
+
     }
 }

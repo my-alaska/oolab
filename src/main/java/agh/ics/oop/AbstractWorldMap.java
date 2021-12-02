@@ -14,14 +14,15 @@ public abstract class AbstractWorldMap implements IPositionChangeObserver, IWorl
         return !(isOccupied(position));
     }
 
-
     public boolean place(Animal animal){
         if(canMoveTo(animal.getPosition())){
             ///this.animals.add(animal);
             this.animalsMap.put(animal.getPosition(),animal);
+            animal.addObserver(this); //albo animal.addObserver((IPositionChangeObserver) this);
             return true;
         }else{
-            return false;
+            throw new IllegalArgumentException(animal.getPosition().toString() + " is not legal placement");
+            //return false;
         }
     }
 
@@ -39,16 +40,19 @@ public abstract class AbstractWorldMap implements IPositionChangeObserver, IWorl
         return null;*/
     }
 
+    public  Map<Vector2d, Animal> getAnimalsMap(){
+        return animalsMap;
+    }
+
     protected abstract Vector2d upright();
     protected abstract Vector2d lowleft();
     public String toString(){
         Vector2d ll = lowleft();
         Vector2d ur = upright();
         ///for(Animal a : animals)
-        for(Animal a : animalsMap.values()){ /// czy można użyć wektorów (Vector2d v : animalsMap.keySet())
-            ll = ll.lowerLeft(a.getPosition());
-            ur = ur.upperRight(a.getPosition());
-        }
+
+        // przenieść do grassfield
+
 
         return new MapVisualizer(this).draw(ll, ur);
     }

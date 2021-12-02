@@ -9,28 +9,27 @@ public class Animal {
     private IWorldMap map;
     private List<IPositionChangeObserver> observers = new ArrayList<>();
 
-    public Animal(){
+    //usunąć i poprawić testy
+    /*public Animal(){
         this.observers = new ArrayList<>();
         this.direction = MapDirection.NORTH;
-    }
+    }*/
 
     public Animal(IWorldMap map){
         ///
         this.observers = new ArrayList<>();
         this.direction = MapDirection.NORTH;
-        addObserver((IPositionChangeObserver) map);
         this.map = map;
-
-        map.place(this);
+        //map.place(this); // z wyjątkami albo przenieść do simulation engine
 
 
     }
     public Animal(IWorldMap map, Vector2d initialPosition){
         this.direction = MapDirection.NORTH;
         this.map = map;
-        addObserver((IPositionChangeObserver) map);
+
         position = initialPosition;
-        map.place(this);
+        //map.place(this);
     }
 
     public Vector2d getPosition(){
@@ -73,16 +72,17 @@ public class Animal {
         if(map.canMoveTo(position.add(direction.toUnitVector()))){
             Vector2d newPosition = position.add(direction.toUnitVector());
             Vector2d oldPosition = position;
-            positionChanged(oldPosition,newPosition);
             position = newPosition;
+            positionChanged(oldPosition,newPosition);
+            // CO ZROBIć żeby zwierzaki zmieniające pozycje zmieniaiły mapboundary
         }
     }
     private void moveBackward(){
         if(map.canMoveTo(position.subtract(direction.toUnitVector()))){
             Vector2d newPosition = position.subtract(direction.toUnitVector());
             Vector2d oldPosition = position;
-            positionChanged(oldPosition,newPosition);
             position = newPosition;
+            positionChanged(oldPosition,newPosition);
         }
     }
 
@@ -91,6 +91,7 @@ public class Animal {
     void addObserver(IPositionChangeObserver observer){
         this.observers.add(observer);
     }
+
     void removeObserver(IPositionChangeObserver observer){
         for(IPositionChangeObserver o : observers){
             if(observer.equals(o)){
@@ -99,7 +100,8 @@ public class Animal {
             }
         }
     }
-    void positionChanged(Vector2d oldPosition, Vector2d newPosition){
+
+    private void positionChanged(Vector2d oldPosition, Vector2d newPosition){
         for(IPositionChangeObserver o : observers){
             o.positionChanged(oldPosition,newPosition);
         }

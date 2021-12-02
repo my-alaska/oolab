@@ -1,63 +1,84 @@
-import agh.ics.oop.Animal;
+import agh.ics.oop.*;
 
-import agh.ics.oop.MoveDirection;
-import agh.ics.oop.OptionsParser;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+//testy do wersji kodu bez mapy
 public class AnimalMoveTest {
+
+
     @Test
     void forwardAndRightTest(){
-        Animal zwierz = new Animal();
+        IWorldMap map = new RectangularMap(5,5);
+        Animal zwierz = new Animal(map);
         zwierz.move(MoveDirection.FORWARD);
-        assertEquals("(2,3) Północ", zwierz.toString());
+        assertEquals("^", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(2,3));
         zwierz.move(MoveDirection.RIGHT);
-        assertEquals("(2,3) Wschód", zwierz.toString());
+        assertEquals(">", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(2,3));
         zwierz.move(MoveDirection.FORWARD);
-        assertEquals("(3,3) Wschód", zwierz.toString());
+        assertEquals(">", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(3,3));
         zwierz.move(MoveDirection.RIGHT);
-        assertEquals("(3,3) Południe", zwierz.toString());
+        assertEquals("v", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(3,3));
         zwierz.move(MoveDirection.FORWARD);
-        assertEquals("(3,2) Południe", zwierz.toString());
+        assertEquals("v", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(3,2));
         zwierz.move(MoveDirection.RIGHT);
-        assertEquals("(3,2) Zachód", zwierz.toString());
+        assertEquals("<", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(3,2));
         zwierz.move(MoveDirection.FORWARD);
-        assertEquals("(2,2) Zachód", zwierz.toString());
+        assertEquals("<", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(2,2));
         zwierz.move(MoveDirection.RIGHT);
-        assertEquals("(2,2) Północ", zwierz.toString());
+        assertEquals("^", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(2,2));
     }
 
     @Test
     void bakwardAndLeftTest(){
-        Animal zwierz = new Animal();
+        IWorldMap map = new RectangularMap(5,5);
+        Animal zwierz = new Animal(map);
         zwierz.move(MoveDirection.BACKWARD);
-        assertEquals("(2,1) Północ", zwierz.toString());
+        assertEquals("^", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(2,1));
         zwierz.move(MoveDirection.LEFT);
-        assertEquals("(2,1) Zachód", zwierz.toString());
+        assertEquals("<", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(2,1));
         zwierz.move(MoveDirection.BACKWARD);
-        assertEquals("(3,1) Zachód", zwierz.toString());
+        assertEquals("<", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(3,1));
         zwierz.move(MoveDirection.LEFT);
-        assertEquals("(3,1) Południe", zwierz.toString());
+        assertEquals("v", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(3,1));
         zwierz.move(MoveDirection.BACKWARD);
-        assertEquals("(3,2) Południe", zwierz.toString());
+        assertEquals("v", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(3,2));
         zwierz.move(MoveDirection.LEFT);
-        assertEquals("(3,2) Wschód", zwierz.toString());
+        assertEquals(">", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(3,2));
         zwierz.move(MoveDirection.BACKWARD);
-        assertEquals("(2,2) Wschód", zwierz.toString());
+        assertEquals(">", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(2,2));
         zwierz.move(MoveDirection.LEFT);
-        assertEquals("(2,2) Północ", zwierz.toString());
+        assertEquals("^", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(2,2));
     }
 
     @Test
     void forwardBoundTest(){
-        Animal zwierz = new Animal();
+        IWorldMap map = new RectangularMap(5,5);
+        Animal zwierz = new Animal(map);
         for(int i = 0; i < 7; i++){
             zwierz.move(MoveDirection.FORWARD);
         }
-        assertEquals("(2,4) Północ", zwierz.toString());
+        assertEquals("^", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(2,4));
 
         zwierz.move(MoveDirection.LEFT);
         zwierz.move(MoveDirection.LEFT);
@@ -65,16 +86,19 @@ public class AnimalMoveTest {
         for(int i = 0; i < 7; i++){
             zwierz.move(MoveDirection.FORWARD);
         }
-        assertEquals("(2,0) Południe", zwierz.toString());
+        assertEquals("v", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(2,0));
     }
 
     @Test
     void backwardBoundTest(){
-        Animal zwierz = new Animal();
+        IWorldMap map = new RectangularMap(5,5);
+        Animal zwierz = new Animal(map);
         for(int i = 0; i < 7; i++){
             zwierz.move(MoveDirection.BACKWARD);
         }
-        assertEquals("(2,0) Północ", zwierz.toString());
+        assertEquals("^", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(2,0));
 
         zwierz.move(MoveDirection.LEFT);
         zwierz.move(MoveDirection.LEFT);
@@ -82,17 +106,20 @@ public class AnimalMoveTest {
         for(int i = 0; i < 7; i++){
             zwierz.move(MoveDirection.BACKWARD);
         }
-        assertEquals("(2,4) Południe", zwierz.toString());
+        assertEquals("v", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(2,4));
     }
 
     @Test
     void forwardBoundTestHorzontal(){
-        Animal zwierz = new Animal();
+        IWorldMap map = new RectangularMap(5,5);
+        Animal zwierz = new Animal(map);
         zwierz.move(MoveDirection.RIGHT);
         for(int i = 0; i < 7; i++){
             zwierz.move(MoveDirection.FORWARD);
         }
-        assertEquals("(4,2) Wschód", zwierz.toString());
+        assertEquals(">", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(4,2));
 
         zwierz.move(MoveDirection.LEFT);
         zwierz.move(MoveDirection.LEFT);
@@ -100,17 +127,20 @@ public class AnimalMoveTest {
         for(int i = 0; i < 7; i++){
             zwierz.move(MoveDirection.FORWARD);
         }
-        assertEquals("(0,2) Zachód", zwierz.toString());
+        assertEquals("<", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(0,2));
     }
 
     @Test
     void backwardBoundTestHorizontal(){
-        Animal zwierz = new Animal();
+        IWorldMap map = new RectangularMap(5,5);
+        Animal zwierz = new Animal(map);
         zwierz.move(MoveDirection.RIGHT);
         for(int i = 0; i < 7; i++){
             zwierz.move(MoveDirection.BACKWARD);
         }
-        assertEquals("(0,2) Wschód", zwierz.toString());
+        assertEquals(">", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(0,2));
 
         zwierz.move(MoveDirection.LEFT);
         zwierz.move(MoveDirection.LEFT);
@@ -118,18 +148,21 @@ public class AnimalMoveTest {
         for(int i = 0; i < 7; i++){
             zwierz.move(MoveDirection.BACKWARD);
         }
-        assertEquals("(4,2) Zachód", zwierz.toString());
+        assertEquals("<", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(4,2));
     }
 
     @Test
     void arrayTest(){
-        Animal zwierz = new Animal();
+        IWorldMap map = new RectangularMap(5,5);
+        Animal zwierz = new Animal(map);
 
         String[] directions = {"cofee","r","Tea", "f", "f", "f", "right", "forward", "figgwasd", "l", "backward"};
         for (MoveDirection d : OptionsParser.parse(directions)){
             zwierz.move(d);
         }
-        assertEquals("(3,1) Wschód", zwierz.toString());
+        assertEquals(">", zwierz.toString());
+        assertEquals(zwierz.getPosition(),new Vector2d(3,1));
     }
 
 }
