@@ -26,6 +26,7 @@ public class OptionsParser {
             if (!legalMoves.contains(s)){
                 throw new IllegalArgumentException(s+ " is not legal move specification");
             }
+            
             switch (s) {
                 case "f", "forward" -> directions.add(MoveDirection.FORWARD);
                 case "b", "backward" -> directions.add(MoveDirection.BACKWARD);

@@ -157,15 +157,16 @@ public class AnimalMoveTest {
         try{
 
             IWorldMap map = new RectangularMap(5,5);
-        Animal zwierz = new Animal(map);
+            Animal zwierz = new Animal(map);
 
-        String[] directions = {"cofee","r","Tea", "f", "f", "f", "right", "forward", "figgwasd", "l", "backward"};
-        OptionsParser parser = new OptionsParser();
-        for (MoveDirection d : parser.parse(directions)){
-            zwierz.move(d);
-        }
-        assertEquals(">", zwierz.toString());
-        assertEquals(zwierz.getPosition(),new Vector2d(3,1));
+            String[] directions = {"cofee","r","Tea", "f", "f", "f", "right", "forward", "figgwasd", "l", "backward"};
+            OptionsParser parser = new OptionsParser();
+            for (MoveDirection d : parser.parse(directions)){
+                zwierz.move(d);
+            }
+            assertEquals(">", zwierz.toString());
+            assertEquals(zwierz.getPosition(),new Vector2d(3,1));
+
         }catch(IllegalArgumentException ex){
                 System.out.println(ex);
             }

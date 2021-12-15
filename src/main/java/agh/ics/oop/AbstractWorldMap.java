@@ -40,19 +40,19 @@ public abstract class AbstractWorldMap implements IPositionChangeObserver, IWorl
         return null;*/
     }
 
-    public  Map<Vector2d, Animal> getAnimalsMap(){
+    public  Map<Vector2d, Animal> getsAnimalMap(){
         return animalsMap;
     }
 
-    protected abstract Vector2d upright();
-    protected abstract Vector2d lowleft();
+    public abstract Vector2d upright();
+    public abstract Vector2d lowleft();
+
     public String toString(){
         Vector2d ll = lowleft();
         Vector2d ur = upright();
         ///for(Animal a : animals)
 
         // przenieść do grassfield
-
 
         return new MapVisualizer(this).draw(ll, ur);
     }
