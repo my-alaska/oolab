@@ -40,6 +40,8 @@ public abstract class AbstractWorldMap implements IPositionChangeObserver, IWorl
         return null;*/
     }
 
+
+
     public  Map<Vector2d, Animal> getsAnimalMap(){
         return animalsMap;
     }
@@ -57,12 +59,25 @@ public abstract class AbstractWorldMap implements IPositionChangeObserver, IWorl
         return new MapVisualizer(this).draw(ll, ur);
     }
 
+    public Map<Vector2d, Animal> getAnimals(){
+        return animalsMap;
+    }
 
     //obserwatorzy
     public void positionChanged(Vector2d oldPosition, Vector2d newPosition){
-        Animal animal = animalsMap.get(oldPosition);
-        animalsMap.remove(oldPosition);
-        animalsMap.put(newPosition, animal);
+        if(!oldPosition.equals(newPosition) ){
+            Animal animal = animalsMap.get(oldPosition);
+            animalsMap.remove(oldPosition);
+            animalsMap.put(newPosition, animal);
+        }
+    }
+
+    public Set<Vector2d> getElementPositions(){
+        Set <Vector2d> set = new HashSet<>();
+        for(Animal animal : animalsMap.values()){
+            set.add(animal.getPosition());
+        }
+        return set;
     }
 
 

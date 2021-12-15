@@ -5,11 +5,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class SimulationEngine implements IEngine {
+public class SimulationEngine implements IEngine, Runnable {
     private MoveDirection[] moves;
     private IWorldMap map;
     //private Vector2d[] positions; ///needed only for tests
     private ArrayList<Animal> animals;
+    int moveDelay = 300;
 
     public SimulationEngine(MoveDirection[] moves, IWorldMap map, Vector2d[] positions) {
         this.moves = moves;
@@ -35,7 +36,13 @@ public class SimulationEngine implements IEngine {
 
             Animal animal = animals.get(i % numOfAnimals);
             if (animal != null) {
+                try {
+                    Thread.sleep(moveDelay);
+                } catch (InterruptedException e) {
+                    System.out.println(e);
+                }
                 animal.move(moves[i]);
+
                 //positions[i % numOfAnimals] = animal.getPosition(); ///needed only for tests
             }
 
@@ -46,5 +53,9 @@ public class SimulationEngine implements IEngine {
 
     public ArrayList<Animal> getAnimals(){
         return this.animals;
+    }
+
+    public void setMoves(MoveDirection[] moves){
+        this.moves = moves;
     }
 }

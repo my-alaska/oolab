@@ -69,6 +69,14 @@ public class GrassField extends AbstractWorldMap{
         return boundaries.lowleft();
     }
 
+    public Set<Vector2d> getElementPositions(){
+        Set <Vector2d> set = super.getElementPositions();
+        for(Grass grass : grassMap.values()){
+            set.add(grass.getPosition());
+        }
+        return set;
+    }
+
 
 
 }

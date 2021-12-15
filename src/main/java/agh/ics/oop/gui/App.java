@@ -1,104 +1,149 @@
 package agh.ics.oop.gui;
 import agh.ics.oop.*;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-public class App extends Application {
-    AbstractWorldMap map;
+public class App extends Application implements IPositionChangeObserver{
+    private AbstractWorldMap map;
+    private GridPane gridPane;
+    private Stage primaryStage;
+    private VBox controlPanel;
+    private int gridSize = 60;
+    private int height;
+    private int width;
 
     public void start(Stage primaryStage){
+        this.primaryStage = primaryStage;
+        gridPane =  gridPaneGenerate();
 
-        /*Label label = new Label("Zwierzak");
-        Label label2 = new Label("Zwierzak");*/
+        HBox sceneBox = new HBox();
+        sceneBox.getChildren().add(gridPane);
+        sceneBox.getChildren().add(controlPanel);
 
-        primaryStage.setTitle("FX GridPane Example");
-        GridPane gridPane = new GridPane();
-        gridPane.setGridLinesVisible(true);
+        Scene scene = new Scene(sceneBox, gridSize*(width+3), gridSize*(height+1));
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
 
-        /*gridPane.add(label, 0,0,1,1);
-        gridPane.add(label2, 12,12,1,1);*/
+    private GridPane gridPaneGenerate(){
+        GridPane grid = new GridPane();
 
         int low = map.lowleft().getY();
         int up = map.upright().getY();
         int left = map.lowleft().getX();
         int right = map.upright().getX();
-        int height = up - low+1;
-        int width = right - left+1;
+
+        height = up - low+1;
+        width = right - left+1;
 
         for (int i = 0; i < width+1; i++) {
-            ColumnConstraints columnConstraints = new ColumnConstraints(20); // width in pixels
-//			columnConstraints.setPercentWidth(100.0 / noOfCols); // percentage of total width
-            gridPane.getColumnConstraints().add(columnConstraints);
+            ColumnConstraints columnConstraints = new ColumnConstraints(gridSize);
+            grid.getColumnConstraints().add(columnConstraints);
         }
-
         for (int i = 0; i < height+1; i++) {
-            RowConstraints rowConstraints = new RowConstraints(20);
-            //rowConstraints.setPercentHeight(100.0 / noOfRows);
-            gridPane.getRowConstraints().add(rowConstraints);
+            RowConstraints rowConstraints = new RowConstraints(gridSize);
+            grid.getRowConstraints().add(rowConstraints);
         }
 
+        Label label = new Label("y\\x");
+        GridPane.setHalignment(label, HPos.CENTER);
+        grid.add(label, 0, 0);
+
+        String text;
         int xIndex;
         int yIndex;
-        for(int i = 0; i < width+1; i++){
-            for(int j = 0; j < height+1; j++){
-                String text;
-                xIndex = left + i - 1;
-                yIndex = height - j-1;
-                if(i==0 & j == 0){
-                    text = "y\\x";
-                }else if(j == 0){
-                    text = "" + xIndex;
-                }else if(i==0){
-                    text = ""+ yIndex;
-                }else{
-                    Object object = map.objectAt(new Vector2d(xIndex,yIndex));
-                    if(object != null){
-                        text = object.toString();
-                    }else{
-                        text = "";
-                    }
-
-                }
-                Label label = new Label(text);
-                GridPane.setHalignment(label, HPos.CENTER);
-                gridPane.add(label, i, j);
+        for(int i = 1; i < width + 1; i++){
+            xIndex = left + i - 1;
+            text = ""+xIndex;
+            label = new Label(text);
+            GridPane.setHalignment(label, HPos.CENTER);
+            grid.add(label, i, 0);
+        }
+        for(int j = 1; j < height + 1; j++){
+            yIndex = up - j +1;
+            text = ""+yIndex;
+            label = new Label(text);
+            GridPane.setHalignment(label, HPos.CENTER);
+            grid.add(label, 0, j);
+        }
+        for (Vector2d v : map.getElementPositions()){
+            IMapElement object = (IMapElement) map.objectAt(v);
+            if (object != null) {
+                VBox vbox = new GuiElementBox(object).getVBox();
+                GridPane.setHalignment(vbox, HPos.CENTER);
+                grid.add(vbox, v.getX() - left + 1, up - v.getY() + 1 );
             }
         }
 
-
-
-
-
-        Scene scene = new Scene(gridPane, 300, 300);
-
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
+        grid.setGridLinesVisible(true);
+        return grid;
     }
 
     @Override
     public void init(){
+        gridPane = new GridPane();
         try{
-            System.out.println("system wystartował");
-
-            // String[] tab = {"f", "b", "r", "l", "f", "f", "r", "r", "f", "f", "f", "f", "f", "f", "f", "f"};
             String[] tab = getParameters().getRaw().toArray(new String[0]);
             MoveDirection[] directions = new OptionsParser().parse( tab );
-            //IWorldMap map = new RectangularMap(11, 11);
-            IWorldMap map = new GrassField(10);
+            AbstractWorldMap map = new GrassField(10);
+            this.map = map;
             Vector2d[] positions = { new Vector2d(2,2), new Vector2d(3,4)};
-            IEngine engine = new SimulationEngine(directions, map, positions);
-            engine.run();
-            this.map = (AbstractWorldMap) map;
-            // System.out.println(map.toString());
+            SimulationEngine engine = new SimulationEngine(directions, map, positions);
 
-            System.out.println("system zakończył działanie");
+            for(Animal animal: map.getAnimals().values()){
+                animal.addObserver(this);
+            }
+
+
+
+            Thread engineThread = new Thread(engine);
+
+            TextField addedMoveDirections = new TextField();
+
+            Button startButton = new Button("run/start");
+            startButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    engineThread.start();//... do something in here.
+
+                }
+            });
+
+            Button setMovesButton = new Button("set moves");
+            setMovesButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    engine.setMoves(new OptionsParser().parse(addedMoveDirections.getText().split("")));
+
+                }
+            });
+
+            controlPanel = new VBox();
+            controlPanel.getChildren().add(startButton);
+            controlPanel.getChildren().add(addedMoveDirections);
+            controlPanel.getChildren().add(setMovesButton);
+            controlPanel.setAlignment(Pos.CENTER);
+
+
+
+
+
+
+
+
+
+
+
         }catch(IllegalArgumentException ex){
             System.out.println(ex);
         }
@@ -106,6 +151,36 @@ public class App extends Application {
 
     }
 
+    private void drawMap(){
+        gridPane.getChildren().clear();
+        gridPane = gridPaneGenerate();
+
+        HBox sceneBox = new HBox();
+        sceneBox.getChildren().add(gridPane);
+        sceneBox.getChildren().add(controlPanel);
+
+
+        Scene scene = new Scene(sceneBox, gridSize*(width+3), gridSize*(height+1));
+
+
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+    }
+
+    @Override
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        Platform.runLater(() -> {
+            drawMap();
+            try{
+            Thread.sleep(100);
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
+
+        });
+    }
 
 }
 
