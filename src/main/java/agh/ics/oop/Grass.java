@@ -21,7 +21,7 @@ public class Grass implements IMapElement{
 
     @Override
     public String imageResource() {
-        return null;
+        return null;    // na pewno?
     }
 
 }

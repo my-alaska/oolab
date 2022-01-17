@@ -3,7 +3,7 @@ package agh.ics.oop;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Animal implements IMapElement{
+public class Animal implements IMapElement {
     private MapDirection direction;
     private Vector2d position;
     private FrontMap frontMap;
@@ -23,18 +23,18 @@ public class Animal implements IMapElement{
     private int dayOfDeath = -1;
 
 
-    public Animal(AbstractMap map, int energy, Genotype genotype ,Vector2d initialPosition){
+    public Animal(AbstractMap map, int energy, Genotype genotype, Vector2d initialPosition) {
         this.observers = new ArrayList<>();
         this.direction = MapDirection.generateRandom(); //
         this.energy = energy;
         this.position = initialPosition;
         this.genotype = genotype;
-        if (map.getClass() == FrontMap.class){
+        if (map.getClass() == FrontMap.class) { // czy zwierzę powinno się tym zajmować?
             this.frontMap = (FrontMap) map;
             this.backMap = frontMap.getBackMap();
             frontMap.place(this);
             this.isOnFrontMap = true;
-        }else{
+        } else {
             this.backMap = (BackMap) map;
             this.frontMap = backMap.getFrontMap();
             backMap.place(this);
@@ -45,64 +45,67 @@ public class Animal implements IMapElement{
     }
 
 
-
-
-
-    public Vector2d getPosition(){
+    public Vector2d getPosition() {
         return position;
     }
 
 
-
-    public String toString(){ //
+    public String toString() { //
         return direction.toString();
     }
 
 
-
-
-    public boolean isAt(Vector2d position){
+    public boolean isAt(Vector2d position) {
         return position.equals(this.position);
     }
 
 
-
-
-    private int rotate(){
+    private int rotate() {
         int rotationNumber = genotype.generateRotationGenes();
         switch (rotationNumber) {
             case 0:
             case 1:
-                for (int i = 0; i < rotationNumber; i++){direction = direction.next();}
+                for (int i = 0; i < rotationNumber; i++) {
+                    direction = direction.next();
+                }
+                //a tu nie powinno być break'a czasem?
             case 2:
-                for (int i = 0; i < rotationNumber; i++){direction = direction.next();}
+                for (int i = 0; i < rotationNumber; i++) {  // te case'y są identyczne
+                    direction = direction.next();
+                }
             case 3:
-                for (int i = 0; i < rotationNumber; i++){direction = direction.next();}
+                for (int i = 0; i < rotationNumber; i++) {
+                    direction = direction.next();
+                }
             case 4:
                 direction = direction.opposite();
             case 5:
-                for (int i = 0; i < 8-rotationNumber; i++){direction = direction.previous();}
+                for (int i = 0; i < 8 - rotationNumber; i++) {
+                    direction = direction.previous();
+                }
             case 6:
-                for (int i = 0; i < 8-rotationNumber; i++){direction = direction.previous();}
+                for (int i = 0; i < 8 - rotationNumber; i++) {
+                    direction = direction.previous();
+                }
             case 7:
-                for (int i = 0; i < 8-rotationNumber; i++){direction = direction.previous();}
+                for (int i = 0; i < 8 - rotationNumber; i++) {
+                    direction = direction.previous();
+                }
         }
         return rotationNumber;
     }
 
 
-
-
-    public void move(){
+    public void move() {
         int rotationNumber = rotate();
-        if (rotationNumber == 0 || rotationNumber == 4){
+        if (rotationNumber == 0 || rotationNumber == 4) {
             Vector2d newPosition = position.add(direction.toUnitVector());
 
-            if(frontMap.inMap(newPosition)){
+            if (frontMap.inMap(newPosition)) {
                 Vector2d oldPosition = position;
                 position = newPosition;
-                positionChanged(oldPosition,newPosition);
-            }else if(isOnFrontMap){
+                positionChanged(oldPosition, newPosition);
+            } else if (isOnFrontMap) {
                 isOnFrontMap = false;
                 frontMap.animalOutsideMap(this, newPosition);
             }
@@ -113,66 +116,64 @@ public class Animal implements IMapElement{
     }
 
 
-
-
-
-    public Animal reproduce(Animal otherAnimal){
-        int childEnergy = (this.energy + otherAnimal.getEnergy())/4;
-        int cutGenesAt = 32 * this.energy/(this.energy+otherAnimal.getEnergy());
-        this.energy = (this.energy*3)/4;
-        otherAnimal.setEnergy((otherAnimal.getEnergy()*3)/4);
+    public Animal reproduce(Animal otherAnimal) {
+        int childEnergy = (this.energy + otherAnimal.getEnergy()) / 4;
+        int cutGenesAt = 32 * this.energy / (this.energy + otherAnimal.getEnergy());
+        this.energy = (this.energy * 3) / 4;
+        otherAnimal.setEnergy((otherAnimal.getEnergy() * 3) / 4);
         Genotype childGenotype = genotype.mixGenesWith(otherAnimal.getGenotype(), cutGenesAt);
-        this.increaseNOChildren();
+        this.increaseNOChildren();  // może childrenCount albo childrenNum by było lepszą nazwą niż NOChildren (sugeruje brak dzieci)
         otherAnimal.increaseNOChildren();
         Animal child;
-        if(isOnFrontMap){
+        if (isOnFrontMap) {
             child = new Animal(frontMap, childEnergy, childGenotype, position);
-        }else{
+        } else {
             child = new Animal(backMap, childEnergy, childGenotype, position);
         }
 
-        if(!this.isObserved && this.ancestor == null){
+        if (!this.isObserved && this.ancestor == null) {
             return child;
         }
-        if(this.isObserved()){
+        if (this.isObserved()) {
             child.setParent(this);
             child.setAncestor(this);
-            this.noObservedChildren +=1;
+            this.noObservedChildren += 1;
             return child;
-        }else if(this.ancestor.isObserved()){
+        } else if (this.ancestor.isObserved()) {
             child.setAncestor(this.ancestor);
             this.ancestor.increaseObservedDescendants();
         }
         return child;
 
     }
-    public void increaseNOChildren(){
+
+    public void increaseNOChildren() {
         this.numberOfChildren += 1;
     }
-    public int getNumberOfChildren(){
+
+    public int getNumberOfChildren() {
         return numberOfChildren;
     }
 
 
-
-    public void increaseAge(){
+    public void increaseAge() {
         age += 1;
     }
 
-    public int getAge(){
+    public int getAge() {
         return age;
     }
 
 
-    public int getEnergy(){
+    public int getEnergy() {
         return this.energy;
     }
 
-    public void setEnergy(int energy){
+    public void setEnergy(int energy) {
         this.energy = energy;
     }
 
-    public Genotype getGenotype(){
+    public Genotype getGenotype() {
         return this.genotype;
     }
 
@@ -180,32 +181,27 @@ public class Animal implements IMapElement{
         this.position = position;
     }
 
-    public void setDirection(MapDirection direction){
+    public void setDirection(MapDirection direction) {
         this.direction = direction;
     }
 
 
-
-
-
-
-
-    public void setObserver(IPositionChangeObserver observer){
+    public void setObserver(IPositionChangeObserver observer) {
         this.observers.add(observer);
     }
 
-    public void removeObserver(IPositionChangeObserver observer){
-        for(IPositionChangeObserver o : observers){
-            if(observer.equals(o)){
+    public void removeObserver(IPositionChangeObserver observer) {
+        for (IPositionChangeObserver o : observers) {
+            if (observer.equals(o)) {
                 observers.remove(observer);
                 break;
             }
         }
     }
 
-    private void positionChanged(Vector2d oldPosition, Vector2d newPosition){
-        for(IPositionChangeObserver o : observers){
-            o.positionChanged(oldPosition,newPosition,this);
+    private void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        for (IPositionChangeObserver o : observers) {
+            o.positionChanged(oldPosition, newPosition, this);
         }
     }
 
@@ -214,12 +210,9 @@ public class Animal implements IMapElement{
         return null;
     }
 
-    public MapDirection getDirection(){
+    public MapDirection getDirection() {
         return direction;
     }
-
-
-
 
 
     public void setObserved(Boolean observed) {
@@ -227,30 +220,34 @@ public class Animal implements IMapElement{
     }
 
 
-
-
-
-    public void setDayOfDeath(int day){
+    public void setDayOfDeath(int day) {
         this.dayOfDeath = day;
     }
-    public int getDayOfDeath(){
+
+    public int getDayOfDeath() {
         return this.dayOfDeath;
     }
+
     public int getNoObservedChildren() {
         return noObservedChildren;
     }
+
     public int getNoObservedDescendants() {
         return noObservedDescendants;
     }
-    public void increaseObservedDescendants(){
+
+    public void increaseObservedDescendants() {
         this.noObservedDescendants += 1;
     }
-    public void setAncestor(Animal ancestor){
+
+    public void setAncestor(Animal ancestor) {
         this.ancestor = ancestor;
     }
-    public void setParent(Animal parent){
+
+    public void setParent(Animal parent) {
         this.parent = parent;
     }
+
     public Boolean isObserved() {
         return isObserved;
     }

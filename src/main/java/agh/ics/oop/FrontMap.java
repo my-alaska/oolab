@@ -6,8 +6,8 @@ import java.io.*;
 import java.util.*;
 
 
-public class FrontMap extends AbstractMap{
-    private  Vector2d jungleCorner;
+public class FrontMap extends AbstractMap {
+    private Vector2d jungleCorner;
     private int jungleSize;
     private int jungleGrass;
     private IDayPassObserver observer;
@@ -17,14 +17,11 @@ public class FrontMap extends AbstractMap{
     public File csvOutputFile;
 
 
-
-
-
-    public FrontMap(Vector2d mapCorner, Vector2d jungleCorner, int grassEnergy, int dayUseEnergy, int sexEnergy, int startEnergy){
-        if (!jungleCorner.follows(new Vector2d(0,0))){
+    public FrontMap(Vector2d mapCorner, Vector2d jungleCorner, int grassEnergy, int dayUseEnergy, int sexEnergy, int startEnergy) {
+        if (!jungleCorner.follows(new Vector2d(0, 0))) {
             throw new IllegalArgumentException("Jungle Corner Vector must be positive");
         }
-        if (!mapCorner.follows(jungleCorner)){
+        if (!mapCorner.follows(jungleCorner)) {
             throw new IllegalArgumentException("Map Corner Vector must follow JungleCorner Vector");
         }
         this.startEnergy = startEnergy;
@@ -33,13 +30,13 @@ public class FrontMap extends AbstractMap{
         this.grassEnergy = grassEnergy;
         this.dayUseEnergy = dayUseEnergy;
         this.sexEnergy = sexEnergy;
-        this.backMap = new BackMap(mapCorner,grassEnergy,dayUseEnergy,sexEnergy,this,startEnergy);
+        this.backMap = new BackMap(mapCorner, grassEnergy, dayUseEnergy, sexEnergy, this, startEnergy);
         updateArea();
         this.jungleGrass = 0;
         this.steppeGrass = 0;
 
         this.csvOutputFile = new File("FrontMapxd.csv");
-        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("FrontMapData.csv",false)))) {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("FrontMapData.csv", false)))) {
             writer.println();
         } catch (IOException e) {
             e.printStackTrace();
@@ -49,26 +46,22 @@ public class FrontMap extends AbstractMap{
     }
 
 
-
-
-    public void updateArea(){
-        this.jungleSize = jungleCorner.getX()*jungleCorner.getY()*4;
-        this.steppeSize = mapCorner.getX()*mapCorner.getY()*4-jungleSize;
-        if(this.jungleSize > this.steppeSize){
+    public void updateArea() {
+        this.jungleSize = jungleCorner.getX() * jungleCorner.getY() * 4;
+        this.steppeSize = mapCorner.getX() * mapCorner.getY() * 4 - jungleSize;
+        if (this.jungleSize > this.steppeSize) {
             throw new IllegalArgumentException("Steppe area must be larger than jungle area");
         }
         this.backMap.updateArea();
     }
 
 
-
-    private boolean inJungle(Vector2d position){
-        return position.precedes(jungleCorner) && position.follows(jungleCorner.opposite()) ;
+    private boolean inJungle(Vector2d position) {
+        return position.precedes(jungleCorner) && position.follows(jungleCorner.opposite());
     }
 
 
-
-    public void dayPass(){
+    public void dayPass() {
         deleteDeadAnimals();
 
         moveAnimals();
@@ -91,41 +84,26 @@ public class FrontMap extends AbstractMap{
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //
 
-    public void animalOutsideMap(Animal animal, Vector2d newPosition){
+    public void animalOutsideMap(Animal animal, Vector2d newPosition) {
         moveToBackMapVectors.add(newPosition);
         moveToBackMap.add(animal);
     }
-    public  void processAnimalsOutside(){
+
+    public void processAnimalsOutside() {
         Animal animal;
         Vector2d newPosition;
-        for(int i = 0; i < moveToBackMap.size();i++){
+        for (int i = 0; i < moveToBackMap.size(); i++) {
             animal = moveToBackMap.get(i);
             newPosition = moveToBackMapVectors.get(i);
             animalsList.remove(animal);
             animalsMap.get(animal.getPosition()).remove(animal);
-            if(animalsMap.get(animal.getPosition()).size()==0){
+            if (animalsMap.get(animal.getPosition()).size() == 0) {
                 animalsMap.remove(animal.getPosition());
             }
             genesMap.get(animal.getGenotype()).remove(animal);
-            if(genesMap.get(animal.getGenotype()).size()==0){
+            if (genesMap.get(animal.getGenotype()).size() == 0) {
                 genesMap.remove(animal.getGenotype());
             }
             animal.removeObserver(this);
@@ -134,32 +112,24 @@ public class FrontMap extends AbstractMap{
     }
 
 
+    private void eatingPhase() {
 
-
-
-
-
-
-
-
-    private  void eatingPhase(){
-
-        for(ArrayList<Animal> set : animalsMap.values()){
+        for (ArrayList<Animal> set : animalsMap.values()) { // lista o nazwie zbiór
             Collections.shuffle(set);
-            if (!set.isEmpty() && grassMap.get(set.get(0).getPosition()) != null){
+            if (!set.isEmpty() && grassMap.get(set.get(0).getPosition()) != null) {
                 ArrayList<Animal> bestAnimalsNow = bestAnimalsInSet(set);
-                int equalEnergy = grassEnergy/bestAnimalsNow.size();
-                int excessEnergy = grassEnergy%bestAnimalsNow.size();
-                for(Animal a : set){
-                    a.setEnergy(a.getEnergy()+equalEnergy);
-                    if(excessEnergy > 0){
-                        a.setEnergy(a.getEnergy()+1);
+                int equalEnergy = grassEnergy / bestAnimalsNow.size();
+                int excessEnergy = grassEnergy % bestAnimalsNow.size();
+                for (Animal a : set) {
+                    a.setEnergy(a.getEnergy() + equalEnergy);
+                    if (excessEnergy > 0) {
+                        a.setEnergy(a.getEnergy() + 1);
                     }
 
                 }
-                if (inJungle(set.get(0).getPosition())){
+                if (inJungle(set.get(0).getPosition())) {
                     jungleGrass -= 1;
-                }else{
+                } else {
                     steppeGrass -= 1;
                 }
                 grassMap.remove(set.get(0).getPosition());
@@ -169,67 +139,58 @@ public class FrontMap extends AbstractMap{
     }
 
 
-
-
-
-    private  void generateGrassJungle(){
-        if(jungleGrass >= jungleSize){
+    private void generateGrassJungle() {
+        if (jungleGrass >= jungleSize) {
             return;
         }
-        int newX = new Random().nextInt(2 * jungleCorner.getX()+1) - jungleCorner.getX();
-        int newY = new Random().nextInt(2 * jungleCorner.getY()+1) - jungleCorner.getY();
-        Vector2d newGrassPosition = new Vector2d(newX,newY);
-        while(grassMap.get(newGrassPosition) != null) {
-            newX = new Random().nextInt(2 * jungleCorner.getX()+1) - jungleCorner.getX();
-            newY = new Random().nextInt(2 * jungleCorner.getY()+1) - jungleCorner.getY();
+        int newX = new Random().nextInt(2 * jungleCorner.getX() + 1) - jungleCorner.getX();
+        int newY = new Random().nextInt(2 * jungleCorner.getY() + 1) - jungleCorner.getY();
+        Vector2d newGrassPosition = new Vector2d(newX, newY);
+        while (grassMap.get(newGrassPosition) != null) {
+            newX = new Random().nextInt(2 * jungleCorner.getX() + 1) - jungleCorner.getX();
+            newY = new Random().nextInt(2 * jungleCorner.getY() + 1) - jungleCorner.getY();
             newGrassPosition = new Vector2d(newX, newY);
         }
-        grassMap.put(newGrassPosition,new Grass(newGrassPosition));
+        grassMap.put(newGrassPosition, new Grass(newGrassPosition));
         jungleGrass += 1;
     }
 
 
-    private  void generateGrassSteppe(){
-        if(steppeGrass >= steppeSize){
+    private void generateGrassSteppe() {
+        if (steppeGrass >= steppeSize) {
             return;
         }
-        int newX = new Random().nextInt(2 * mapCorner.getX()+1) - mapCorner.getX();
-        int newY = new Random().nextInt(2 * mapCorner.getY()+1) - mapCorner.getY();
-        Vector2d newGrassPosition = new Vector2d(newX,newY);
-        while(grassMap.get(newGrassPosition) != null ||
-                (inJungle(newGrassPosition))){
-            newX = new Random().nextInt(2 * mapCorner.getX()+1) - mapCorner.getX();
-            newY = new Random().nextInt(2 * mapCorner.getY()+1) - mapCorner.getY();
-            newGrassPosition = new Vector2d(newX,newY);
+        int newX = new Random().nextInt(2 * mapCorner.getX() + 1) - mapCorner.getX();
+        int newY = new Random().nextInt(2 * mapCorner.getY() + 1) - mapCorner.getY();
+        Vector2d newGrassPosition = new Vector2d(newX, newY);
+        while (grassMap.get(newGrassPosition) != null ||
+                (inJungle(newGrassPosition))) {
+            newX = new Random().nextInt(2 * mapCorner.getX() + 1) - mapCorner.getX();
+            newY = new Random().nextInt(2 * mapCorner.getY() + 1) - mapCorner.getY();
+            newGrassPosition = new Vector2d(newX, newY);
 
         }
-        grassMap.put(newGrassPosition,new Grass(newGrassPosition));
+        grassMap.put(newGrassPosition, new Grass(newGrassPosition));
         steppeGrass += 1;
     }
 
 
-
-
-
-
-
-
     private void writeData() {
-        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("FrontMapData.csv",true)))) {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("FrontMapData.csv", true)))) {
 
-            int avgEnergy, avgNoChildren,avgAge;
+            int avgEnergy, avgNoChildren, avgAge;
 
-            if (animalsMap.size() != 0){
+            if (animalsMap.size() != 0) {
                 avgEnergy = wholeEnergy / animalsMap.size();
                 avgNoChildren = this.getAllChildrenNumber() / animalsMap.size();
-            }else{
+            } else {
                 avgEnergy = 0;
                 avgNoChildren = 0;
             }
 
-            if(super.getAllDeadAnimals() != 0){
+            if (super.getAllDeadAnimals() != 0) {
                 avgAge = super.getAllDeadAge() / super.getAllDeadAnimals();
-            }else{
+            } else {
                 avgAge = 0;
             }
 
@@ -245,10 +206,6 @@ public class FrontMap extends AbstractMap{
     }
 
 
-
-
-
-
 //    public String printStatistics(){
 //        String statistics = "grass: " + getGrassNumber() +
 //                "\nanimals: "+getAnimalsNumber()+
@@ -258,44 +215,50 @@ public class FrontMap extends AbstractMap{
 //        return statistics;
 //    }
 
-    public int getGrassNumber(){
+    public int getGrassNumber() {
         return steppeGrass + jungleGrass + backMap.getGrassNumber();
     }
 
-    public int getAnimalsNumber(){
+    public int getAnimalsNumber() {
         return animalsList.size() + backMap.getAnimalsNumber();
     }
 
-    public int avgEnergy(){
-        if (getAnimalsNumber() == 0){return 0;}
-        return (wholeEnergy + backMap.getWholeEnergy())/(getAnimalsNumber());
-    }
-
-    public int getAvgAge(){
-        if(super.getAllDeadAnimals() + backMap.getAllDeadAnimals() == 0){
+    public int avgEnergy() {
+        if (getAnimalsNumber() == 0) {
             return 0;
         }
-        return (super.getAllDeadAge() + backMap.getAllDeadAge())/(super.getAllDeadAnimals() + backMap.getAllDeadAnimals());
+        return (wholeEnergy + backMap.getWholeEnergy()) / (getAnimalsNumber());
     }
 
-    public int getAvgNOChildren(){
-        if (getAnimalsNumber() == 0){return 0;}
-        return (this.getAllChildrenNumber()+ backMap.getAllChildrenNumber())/this.getAnimalsNumber();
+    public int getAvgAge() {
+        if (super.getAllDeadAnimals() + backMap.getAllDeadAnimals() == 0) {
+            return 0;
+        }
+        return (super.getAllDeadAge() + backMap.getAllDeadAge()) / (super.getAllDeadAnimals() + backMap.getAllDeadAnimals());
     }
 
-    public  Genotype getBestGenotype(){
+    public int getAvgNOChildren() {
+        if (getAnimalsNumber() == 0) {
+            return 0;
+        }
+        return (this.getAllChildrenNumber() + backMap.getAllChildrenNumber()) / this.getAnimalsNumber();
+    }
+
+    public Genotype getBestGenotype() {
         Genotype bestGenes = new Genotype();
         int count = 0;
-        for(Genotype genotype : genesMap.keySet()){
-            if(genesMap.get(genotype).size() > count){
+        for (Genotype genotype : genesMap.keySet()) {
+            if (genesMap.get(genotype).size() > count) {
                 count = genesMap.get(genotype).size();
                 bestGenes = genotype;
-            }}
-        for(Genotype genotype : backMap.getGenesMap().keySet()){
-            if(backMap.getGenesMap().get(genotype).size() > count){
+            }
+        }
+        for (Genotype genotype : backMap.getGenesMap().keySet()) {
+            if (backMap.getGenesMap().get(genotype).size() > count) {
                 count = backMap.getGenesMap().get(genotype).size();
                 bestGenes = genotype;
-            }}
+            }
+        }
         return bestGenes;
     }
 
@@ -303,22 +266,17 @@ public class FrontMap extends AbstractMap{
         Genotype bestGenes = getBestGenotype();
         HashSet<Animal>[] bestGenesOnMap = new HashSet[2];
         bestGenesOnMap[0] = genesMap.get(bestGenes);
-        if (bestGenesOnMap[0] == null){
+        if (bestGenesOnMap[0] == null) {
             bestGenesOnMap[0] = new HashSet<Animal>(Collections.emptySet());
         }
         bestGenesOnMap[1] = backMap.getGenesMap().get(bestGenes);
 
-        if (bestGenesOnMap[1] == null){
+        if (bestGenesOnMap[1] == null) {
             bestGenesOnMap[1] = new HashSet<Animal>(Collections.emptySet());
             return bestGenesOnMap;
         }
         return bestGenesOnMap;
     }
-
-
-
-
-
 
 
     public void setMapCorner(Vector2d mapCorner) {
@@ -332,7 +290,7 @@ public class FrontMap extends AbstractMap{
         updateArea();
     }
 
-    public void setGrassEnergy(int grassEnergy){
+    public void setGrassEnergy(int grassEnergy) {
         this.grassEnergy = grassEnergy;
         this.backMap.setGrassEnergy(grassEnergy);
     }
@@ -348,20 +306,19 @@ public class FrontMap extends AbstractMap{
     }
 
 
-
-    public Vector2d getJungleCorner(){
+    public Vector2d getJungleCorner() {
         return this.jungleCorner;
     }
 
-    public void dayPassed(){
+    public void dayPassed() {
         observer.dayPassed();
     }
 
-    public void setObserver(IDayPassObserver observer){
+    public void setObserver(IDayPassObserver observer) {
         this.observer = observer;
     }
 
-    public BackMap getBackMap(){
+    public BackMap getBackMap() {
         return this.backMap;
     }
 }

@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 
 import java.util.HashSet;
 
-public class App extends Application implements IDayPassObserver {
+public class App extends Application implements IDayPassObserver {  // ta klasa jest przerośnięta
     private FrontMap frontMap;
     private GridPane gridPane;
     private Stage primaryStage;

@@ -55,7 +55,7 @@ public enum MapDirection {
 
     Vector2d toUnitVector(){
         return switch (this) {
-            case NORTH -> new Vector2d(0, 1);
+            case NORTH -> new Vector2d(0, 1);   // nowy wektor co wywołanie
             case NORTHEAST -> new Vector2d(1, 1);
             case EAST -> new Vector2d(1, 0);
             case SOUTHEAST -> new Vector2d(1, -1);
@@ -67,18 +67,8 @@ public enum MapDirection {
     }
 
     public static MapDirection generateRandom(){
-        int directionGenerator = new Random().nextInt(8);
-        return switch (directionGenerator){
-            case 0 -> NORTH;
-            case 1 -> NORTHEAST;
-            case 2 -> EAST;
-            case 3 -> SOUTHEAST;
-            case 4 -> SOUTH;
-            case 5 -> SOUTHWEST;
-            case 6 -> WEST;
-            case 7 -> NORTHWEST;
-            default -> throw new IllegalStateException("Unexpected value: " + directionGenerator);
-        };
+        int directionGenerator = new Random().nextInt(8);   // nowy obiekt co wywołanie + nieczytelna nazwa
+        return MapDirection.values()[directionGenerator];
     }
 
     public String toString(){ //

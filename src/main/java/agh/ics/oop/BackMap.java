@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 
-public class BackMap extends AbstractMap {
+public class BackMap extends AbstractMap {  // co to jest tylna mapa?
 
 
     private int grassEnergy;
@@ -35,7 +35,7 @@ public class BackMap extends AbstractMap {
     }
 
     public void updateArea() {
-        steppeSize = mapCorner.getX() *mapCorner.getY() * 4;
+        steppeSize = mapCorner.getX() *mapCorner.getY() * 4;    // czemu razy 4?
     }
 
     protected void addAnimals(ArrayList<Animal> moveToBackMap) {
@@ -82,6 +82,7 @@ public class BackMap extends AbstractMap {
                     animal.setDirection(animal.getDirection().opposite());
                 }
             }
+            // a east i west?
         }
     }
 
